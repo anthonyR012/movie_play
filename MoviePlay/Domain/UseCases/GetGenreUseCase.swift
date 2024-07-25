@@ -5,9 +5,9 @@ protocol GetGenresUseCase {
 }
 
 class GetGenresUseCaseImpl: GetGenresUseCase {
-    private let apiClient: APIClient
+    private let apiClient: APIClientDatasource
     
-    init(apiClient: APIClient) {
+    init(apiClient: APIClientDatasource) {
         self.apiClient = apiClient
     }
     

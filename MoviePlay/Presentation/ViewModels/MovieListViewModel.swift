@@ -10,6 +10,7 @@ import Combine
 
 class MovieListViewModel: ObservableObject {
     @Published var movies: [MovieModel] = []
+    @Published var genres: [GenreModel] = []
     @Published var filters: MovieFiltersModel = MovieFiltersModel(
         adult: false,
         originalLanguage: .en,
@@ -60,8 +61,8 @@ class MovieListViewModel: ObservableObject {
                     print("Error fetching genres: \(error)")
                 }
             },
-            receiveValue: { [weak self] movies in
-                   self?.movies = movies.results
+            receiveValue: { [weak self] genres in
+                   self?.genres = genres.genres
             })
             .store(in: &cancellables)
     }

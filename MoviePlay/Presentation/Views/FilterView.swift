@@ -14,7 +14,7 @@ struct FilterView : View {
     @StateObject private var viewModel: MovieListViewModel
 
     init() {
-        let apiClient = APIClientImpl(
+        let apiClient = APIClientDatasourceImpl(
                     baseURL: Configuration.shared.baseUrl,
                     token: Configuration.shared.token
                 )

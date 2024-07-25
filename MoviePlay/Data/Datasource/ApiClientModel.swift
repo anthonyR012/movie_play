@@ -8,14 +8,14 @@
 import Foundation
 import Combine
 
-protocol APIClient {
+protocol APIClientDatasource {
     func fetchMovies(filters: MovieFiltersModel) -> AnyPublisher<Movies, Error>
     func searchMovies(filters: MovieFiltersModel) -> AnyPublisher<Movies, Error>
     func fetchImage(url: String) -> AnyPublisher<Data, Error> 
     func fetchGenders(lenguage: String) -> AnyPublisher<Genres, Error>
 }
 
-class APIClientImpl: APIClient {
+class APIClientDatasourceImpl: APIClientDatasource {
     private let baseURL : String
     private let baseImageURL : String
     private let token : String
