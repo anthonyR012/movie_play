@@ -9,13 +9,21 @@ import Foundation
 import SwiftUI
 
 struct FilterView : View {
-    @StateObject private var viewModel = MovieListViewModel(
-        GetMoviesUseCaseImpl(
-                apiClient: APIClientImpl(
+    
+
+    @StateObject private var viewModel: MovieListViewModel
+
+    init() {
+        let apiClient = APIClientDatasourceImpl(
                     baseURL: Configuration.shared.baseUrl,
                     token: Configuration.shared.token
-                )))
-    
+                )
+        let getMoviesUseCase = GetMoviesUseCaseImpl(apiClient: apiClient)
+        let getGenresUseCase = GetGenresUseCaseImpl(apiClient: apiClient)
+        _viewModel = StateObject(wrappedValue: MovieListViewModel(getMoviesUseCase, getGenresUseCase))
+    }
+
+
     var body: some View{
         VStack {
             TextField("Search for movies", text: $viewModel.filters.query)

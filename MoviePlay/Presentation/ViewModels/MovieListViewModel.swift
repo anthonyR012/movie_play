@@ -10,6 +10,7 @@ import Combine
 
 class MovieListViewModel: ObservableObject {
     @Published var movies: [MovieModel] = []
+    @Published var genres: [GenreModel] = []
     @Published var filters: MovieFiltersModel = MovieFiltersModel(
         adult: false,
         originalLanguage: .en,
@@ -20,11 +21,18 @@ class MovieListViewModel: ObservableObject {
         typeFilter: .all)
     
     private let getMoviesUseCase: GetMoviesUseCase
+    private let getGenresUseCase: GetGenresUseCase
     private var cancellables: Set<AnyCancellable> = []
     
-    init(_ getMoviesUseCase: GetMoviesUseCase) {
+    init(_ getMoviesUseCase: GetMoviesUseCase,_  getGenresUseCase: GetGenresUseCase) {
         self.getMoviesUseCase = getMoviesUseCase
-       
+        self.getGenresUseCase = getGenresUseCase
+        $filters
+            .map { $0.language } 
+            .sink { [weak self] language in
+                self?.fetchGenders(for: language)
+            }
+            .store(in: &cancellables)
         $filters
             .sink { [weak self] filters in
                 self?.fetchMovies(filters: filters)
@@ -46,6 +54,17 @@ class MovieListViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-   
+   func fetchGenders(for lenguage: String) {
+        getGenresUseCase.execute(lenguage: lenguage)
+            .sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    print("Error fetching genres: \(error)")
+                }
+            },
+            receiveValue: { [weak self] genres in
+                   self?.genres = genres.genres
+            })
+            .store(in: &cancellables)
+    }
     
 }
