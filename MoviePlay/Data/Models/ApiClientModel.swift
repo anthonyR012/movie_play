@@ -11,15 +11,25 @@ import Combine
 protocol APIClient {
     func fetchMovies(filters: MovieFiltersModel) -> AnyPublisher<Movies, Error>
     func searchMovies(filters: MovieFiltersModel) -> AnyPublisher<Movies, Error>
+    func fetchImage(url: String) -> AnyPublisher<Data, Error> 
+    func fetchGenders(lenguage: String) -> AnyPublisher<Genres, Error>
 }
 
 class APIClientImpl: APIClient {
     private let baseURL : String
+    private let baseImageURL : String
     private let token : String
+    private let session : URLSession
     
-    init(baseURL: String, token: String) {
+    init(baseURL: String, token: String, baseImageURL: String) {
+        self.baseImageURL = baseImageURL
         self.baseURL = baseURL
         self.token = token
+        let sessionConfiguration = URLSessionConfiguration.default
+        sessionConfiguration.httpAdditionalHeaders = [
+            "Authorization": "Bearer \(token)"
+        ]
+        let session = URLSession(configuration: sessionConfiguration)
     }
     
     
@@ -31,13 +41,7 @@ class APIClientImpl: APIClient {
             URLQueryItem(name: "language", value: filters.originalLanguage.rawValue),
             URLQueryItem(name: "sort_by", value: filters.popularity.rawValue),
         ]
-        let url = urlComponents.url!
-            
-        let sessionConfiguration = URLSessionConfiguration.default
-        sessionConfiguration.httpAdditionalHeaders = [
-            "Authorization": "Bearer \(token)"
-        ]
-        let session = URLSession(configuration: sessionConfiguration)
+        let url = urlComponents.url! 
         return session.dataTaskPublisher(for: url)
             .map(\.data)
             .receive(on: DispatchQueue.main)
@@ -57,17 +61,32 @@ class APIClientImpl: APIClient {
             URLQueryItem(name: "query", value: filters.query),
         ]
         let url = urlComponents.url!
-        
-        let sessionConfiguration = URLSessionConfiguration.default
-        sessionConfiguration.httpAdditionalHeaders = [
-            "Authorization": "Bearer \(token)"
-        ]
-        let session = URLSession(configuration: sessionConfiguration)
-        print(url)
         return session.dataTaskPublisher(for: url)
             .map(\.data)
             .receive(on: DispatchQueue.main)
             .decode(type: Movies.self, decoder: JSONDecoder())
+            .eraseToAnyPublisher()
+    }
+
+    func fetchImage (url: String) -> AnyPublisher<Data, Error> {
+        let url = URL(string: baseImageURL)!
+        return session.dataTaskPublisher(for: url)
+            .map(\.data)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+
+
+    func fetchGenders(lenguage: String) -> AnyPublisher<Genres, Error> {
+        var urlComponents = URLComponents(string: "\(baseURL)/genre/movie/list")!
+        urlComponents.queryItems = [
+            URLQueryItem(name: "language", value: lenguage),
+        ]
+        let url = urlComponents.url!
+        return session.dataTaskPublisher(for: url)
+            .map(\.data)
+            .receive(on: DispatchQueue.main)
+            .decode(type: Genres.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
     }
     
