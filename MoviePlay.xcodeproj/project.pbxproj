@@ -16,6 +16,8 @@
 		09E3612D2C51CAB000D8461B /* GetMoviesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E3612C2C51CAB000D8461B /* GetMoviesUseCase.swift */; };
 		09E3612F2C51CADB00D8461B /* ApiClientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E3612E2C51CADB00D8461B /* ApiClientModel.swift */; };
 		09E361312C51CB8700D8461B /* MovieListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E361302C51CB8700D8461B /* MovieListViewModel.swift */; };
+		09E361332C5204DC00D8461B /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E361322C5204DC00D8461B /* FilterView.swift */; };
+		09E361352C52087700D8461B /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E361342C52087600D8461B /* Configuration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,8 @@
 		09E3612C2C51CAB000D8461B /* GetMoviesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMoviesUseCase.swift; sourceTree = "<group>"; };
 		09E3612E2C51CADB00D8461B /* ApiClientModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClientModel.swift; sourceTree = "<group>"; };
 		09E361302C51CB8700D8461B /* MovieListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListViewModel.swift; sourceTree = "<group>"; };
+		09E361322C5204DC00D8461B /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
+		09E361342C52087600D8461B /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,7 +122,6 @@
 		09E361252C51C9CF00D8461B /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				09E361282C51C9E900D8461B /* Controllers */,
 				09E361272C51C9E000D8461B /* ViewModels */,
 				09E361262C51C9D600D8461B /* Views */,
 			);
@@ -128,6 +131,7 @@
 		09E361262C51C9D600D8461B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				09E361322C5204DC00D8461B /* FilterView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -140,16 +144,10 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		09E361282C51C9E900D8461B /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Controllers;
-			sourceTree = "<group>";
-		};
 		09E361292C51C9F400D8461B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				09E361342C52087600D8461B /* Configuration.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -227,7 +225,9 @@
 				09E3612B2C51CA7800D8461B /* MovieFilterModel.swift in Sources */,
 				09E3612F2C51CADB00D8461B /* ApiClientModel.swift in Sources */,
 				09E3612D2C51CAB000D8461B /* GetMoviesUseCase.swift in Sources */,
+				09E361352C52087700D8461B /* Configuration.swift in Sources */,
 				09E361312C51CB8700D8461B /* MovieListViewModel.swift in Sources */,
+				09E361332C5204DC00D8461B /* FilterView.swift in Sources */,
 				09E361222C51C99F00D8461B /* MovieModel.swift in Sources */,
 				09E361142C51C76A00D8461B /* ContentView.swift in Sources */,
 				09E361122C51C76A00D8461B /* MoviePlayApp.swift in Sources */,

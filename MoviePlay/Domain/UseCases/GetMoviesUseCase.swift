@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol GetMoviesUseCase {
-    func execute(category: String, page: Int, filters: MovieFiltersModel) -> AnyPublisher<Movies, Error>
+    func execute( filters: MovieFiltersModel) -> AnyPublisher<Movies, Error>
 }
 
 class GetMoviesUseCaseImpl: GetMoviesUseCase {
@@ -19,7 +19,20 @@ class GetMoviesUseCaseImpl: GetMoviesUseCase {
         self.apiClient = apiClient
     }
     
-    func execute(category: String, page: Int, filters: MovieFiltersModel) -> AnyPublisher<Movies, Error> {
-        return apiClient.fetchMovies(category: category, page: page, filters: filters)
+    func execute(filters: MovieFiltersModel) -> AnyPublisher<Movies, Error> {
+        var typeFilter = filters.typeFilter
+        if !filters.query.isEmpty {
+            typeFilter = .search
+        } else {
+            typeFilter = .all
+        }
+        switch typeFilter {
+        case .search:
+            return apiClient.searchMovies(filters: filters)
+        case .all:
+            return apiClient.fetchMovies( filters: filters)
+        
+        }
+        
     }
 }

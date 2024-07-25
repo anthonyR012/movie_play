@@ -6,7 +6,7 @@
 //
 
 
-struct Movies: Codable,Hashable  {
+struct Movies: Codable, Hashable  {
     let page: Int
     let results: [MovieModel]
     let totalPages, totalResults: Int
@@ -22,13 +22,13 @@ struct Movies: Codable,Hashable  {
 
 struct MovieModel: Codable ,Hashable {
     let adult: Bool
-    let backdropPath: String
+    let backdropPath,posterPath: String?
     let genreIDS: [Int]
     let id: Int
     let originalLanguage: String
     let originalTitle, overview: String
     let popularity: Double
-    let posterPath, releaseDate, title: String
+    let releaseDate, title: String
     let video: Bool
     let voteAverage: Double
     let voteCount: Int
