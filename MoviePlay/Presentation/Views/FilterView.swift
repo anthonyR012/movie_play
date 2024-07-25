@@ -73,3 +73,7 @@ struct MovieFilterView: View {
         }
     }
 }
+
+#Preview{
+    FilterView()
+}

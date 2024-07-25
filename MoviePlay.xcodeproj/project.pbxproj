@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09CC65202C52C298003BB899 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09CC651F2C52C298003BB899 /* HomeView.swift */; };
+		09CC65222C52C89B003BB899 /* MovieDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09CC65212C52C89B003BB899 /* MovieDetail.swift */; };
 		09E361122C51C76A00D8461B /* MoviePlayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E361112C51C76A00D8461B /* MoviePlayApp.swift */; };
 		09E361142C51C76A00D8461B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E361132C51C76A00D8461B /* ContentView.swift */; };
 		09E361162C51C77600D8461B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09E361152C51C77600D8461B /* Assets.xcassets */; };
@@ -21,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		09CC651F2C52C298003BB899 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		09CC65212C52C89B003BB899 /* MovieDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetail.swift; sourceTree = "<group>"; };
 		09E3610E2C51C76A00D8461B /* MoviePlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoviePlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09E361112C51C76A00D8461B /* MoviePlayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviePlayApp.swift; sourceTree = "<group>"; };
 		09E361132C51C76A00D8461B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -132,6 +136,8 @@
 			isa = PBXGroup;
 			children = (
 				09E361322C5204DC00D8461B /* FilterView.swift */,
+				09CC651F2C52C298003BB899 /* HomeView.swift */,
+				09CC65212C52C89B003BB899 /* MovieDetail.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -225,12 +231,14 @@
 				09E3612B2C51CA7800D8461B /* MovieFilterModel.swift in Sources */,
 				09E3612F2C51CADB00D8461B /* ApiClientModel.swift in Sources */,
 				09E3612D2C51CAB000D8461B /* GetMoviesUseCase.swift in Sources */,
+				09CC65202C52C298003BB899 /* HomeView.swift in Sources */,
 				09E361352C52087700D8461B /* Configuration.swift in Sources */,
 				09E361312C51CB8700D8461B /* MovieListViewModel.swift in Sources */,
 				09E361332C5204DC00D8461B /* FilterView.swift in Sources */,
 				09E361222C51C99F00D8461B /* MovieModel.swift in Sources */,
 				09E361142C51C76A00D8461B /* ContentView.swift in Sources */,
 				09E361122C51C76A00D8461B /* MoviePlayApp.swift in Sources */,
+				09CC65222C52C89B003BB899 /* MovieDetail.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
