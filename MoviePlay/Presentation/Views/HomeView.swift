@@ -25,11 +25,11 @@ struct HomeView: View {
         NavigationView {
             VStack {
                 NavigationLink(destination: FilterView()) {
-                    SearchFilterView()
+                    SearchFilterView(query: $viewModel.filters.query ,enable: false)
                 }
                 CategoryFilter(category: $viewModel.filters.category)
                 Spacer()
-                ListMoviesScrollView(movies: $viewModel.movies)
+                ListMoviesScrollView(movies: $viewModel.movies,genres: viewModel.genres)
             }
             .navigationTitle("Find Movies and More..")
             .labelStyle(DefaultLabelStyle())
@@ -71,18 +71,17 @@ struct MovieCardView: View {
     }
 }
 
-#Preview {
-    HomeView()
-}
 
 struct SearchFilterView: View {
-    @State var query : String = ""
+    @Binding var query : String
+    var enable : Bool = true
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
-            TextField("Sherlock Holmes", text: $query)
-                .foregroundColor(.primary)
+            TextField("Sherlock Holmes", text: enable ? $query : .constant(""))
+                .foregroundStyle(.primary)
+                .disabled(!enable)
         }
         .padding()
         .background(Color(.systemGray6))
@@ -94,6 +93,7 @@ struct SearchFilterView: View {
 
 struct ListMoviesScrollView: View {
     @Binding var movies: [MovieModel]
+    let genres: [GenreModel]
     var body: some View {
         GeometryReader { proxy in
             ScrollView {
@@ -103,7 +103,8 @@ struct ListMoviesScrollView: View {
                 {
                     ForEach(movies, id: \.self) {
                         movie in
-                        NavigationLink(destination: MovieDetailView(movie: movie)) {
+                        let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
+                        NavigationLink(destination: MovieDetailView(movie: movie,genres: movieGenres)) {
                             MovieCardView(movie: movie,
                                           width: proxy.size.width * 0.5)
                         }

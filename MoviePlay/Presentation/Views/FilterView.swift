@@ -23,9 +23,9 @@ struct FilterView: View {
 
     var body: some View {
         VStack {
-            SearchFilterView()
+            SearchFilterView(query: $viewModel.filters.query)
             MovieFilterView(filters: $viewModel.filters)
-            ListMoviesFound(movies: viewModel.movies)
+            ListMoviesFound(movies: viewModel.movies,genres: viewModel.genres)
         }
     }
 }
@@ -59,18 +59,18 @@ struct MovieFilterView: View {
     }
 }
 
-#Preview {
-    FilterView()
-}
-//
 struct ListMoviesFound: View {
     var movies : [MovieModel]
+    var genres: [GenreModel]
     var body: some View {
+       
+        
         GeometryReader{
             proxy in
             List(movies, id: \.self) { movie in
+                let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
                 VStack(alignment: .leading) {
-                    NavigationLink(destination: MovieDetailView(movie: movie)) {
+                    NavigationLink(destination: MovieDetailView(movie: movie,genres: movieGenres)) {
                         MovieCardView(movie: movie, width: proxy.size.width,
                         showSubTilte: false)
                     }

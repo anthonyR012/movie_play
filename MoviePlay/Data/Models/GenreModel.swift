@@ -11,7 +11,7 @@ struct Genres: Codable {
     let genres: [GenreModel]
 }
 
-struct GenreModel: Codable {
+struct GenreModel: Codable,Hashable {
     let id: Int
     let name: String
 }
