@@ -63,7 +63,7 @@
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "BASE_URL_IMAGE"
-            value = "https://image.tmdb.org/t/p/w200/"
+            value = "https://image.tmdb.org/t/p/w400"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

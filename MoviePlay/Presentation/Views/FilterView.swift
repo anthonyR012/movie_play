@@ -1,131 +1,56 @@
-//
-//  FilterView.swift
-//  MoviePlay
-//
-//  Created by Anthony Rubio on 24/07/24.
-//
-
-import Foundation
 import SwiftUI
 
-struct FilterView: View {
-    @StateObject private var viewModel: MovieListViewModel
-
-    init() {
-        let apiClient = APIClientDatasourceImpl(
-            baseURL: Configuration.shared.baseUrl,
-            token: Configuration.shared.token
-        )
-        let getMoviesUseCase = GetMoviesUseCaseImpl(apiClient: apiClient)
-        let getGenresUseCase = GetGenresUseCaseImpl(apiClient: apiClient)
-        _viewModel = StateObject(wrappedValue: MovieListViewModel(getMoviesUseCase, getGenresUseCase))
-    }
-
+struct FilteredSearchView: View {
+    @StateObject var viewModel: MovieListViewModel
+    
     var body: some View {
-        VStack {
-            SearchFilterView(query: $viewModel.filters.query)
+        VStack(alignment: .leading) {
+            SearchBarView(searchText: $viewModel.filters.query)
             MovieFilterView(filters: $viewModel.filters)
-            ListMoviesFound(movies: viewModel.movies,genres: viewModel.genres)
+            FilteredResult(movies: viewModel.movies, genres: viewModel.genres)
         }
+        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .foregroundColor(.white)
     }
 }
 
 struct MovieFilterView: View {
     @Binding var filters: MovieFiltersModel
-
+    
     var body: some View {
-        VStack {
-            Toggle("Adult Content", isOn: $filters.adult)
-                .padding()
-
+        VStack(alignment: .leading, spacing: 16) {
             Picker("Language", selection: $filters.originalLanguage) {
-                Text("English").tag(OriginalLanguage.en)
-                Text("French").tag(OriginalLanguage.fr)
-                Text("Chinese").tag(OriginalLanguage.zh)
+                ForEach(OriginalLanguage.allCases, id: \.self) { language in
+                    Text(language.rawValue).tag(language)
+                }
             }
             .pickerStyle(SegmentedPickerStyle())
-            .padding()
-
-            HStack {
-                Picker("Popularity", selection: $filters.popularity) {
-                    Text("Ascending").tag(Popularity.asc)
-                    Text("Descendant").tag(Popularity.desc)
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding()
-            }
-            .padding()
+            Toggle("Include Adult Content", isOn: $filters.adult)
+                .foregroundStyle(.black)
+                .tint(.black)
+           
         }
+        .padding()
+        .background(Color(.darkGray))
+        .cornerRadius(10)
+        .padding(.horizontal)
+        .transition(.slide)
     }
 }
 
-struct ListMoviesFound: View {
-    var movies : [MovieModel]
+struct FilteredResult: View {
+    var movies: [MovieModel]
     var genres: [GenreModel]
+    
     var body: some View {
-       
-        
-        GeometryReader{
-            proxy in
-            List(movies, id: \.self) { movie in
-                let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
-                VStack(alignment: .leading) {
-                    NavigationLink(destination: MovieDetailView(movie: movie,genres: movieGenres)) {
-                        MovieCardView(movie: movie, width: proxy.size.width,
-                        showSubTilte: false)
-                    }
-                    Text(movie.title)
-                        .font(.headline)
-                    Text(movie.overview)
-                        .font(.subheadline)
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 16)]) {
+                ForEach(movies, id: \.self) { movie in
+                    let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
+                    MovieItemView(movie: movie, genres: movieGenres)
                 }
             }
+            .padding()
         }
-       
     }
 }
-
-
-//struct MovieListView: View {
-//    let movies: [MovieModel]
-//    let proxy: GeometryProxy
-//    
-//    @State private var selectedMovie: MovieModel? = nil
-//    
-//    var body: some View {
-//        NavigationView {
-//            List(movies, id: \.self) { movie in
-//                Button(action: {
-//                    // Establecer el estado para iniciar la navegación
-//                    selectedMovie = movie
-//                    navigateToMovieDetail(movie)
-//                }) {
-//                    HStack {
-//                        MovieCardView(movie: movie, width: proxy.size.width, showSubTitle: false)
-//                        VStack(alignment: .leading) {
-//                            Text(movie.title)
-//                                .font(.headline)
-//                            Text(movie.overview)
-//                                .font(.subheadline)
-//                        }
-//                    }
-//                    .padding(.vertical, 8)
-//                }
-//                .buttonStyle(PlainButtonStyle())
-//                .background(Color.clear)
-//            }
-//            .background(
-//                NavigationLink(destination: MovieDetailView(movie: selectedMovie), isActive: Binding(
-//                    get: { selectedMovie != nil },
-//                    set: { if !$0 { selectedMovie = nil } }
-//                )) {
-//                    EmptyView()
-//                }
-//            )
-//        }
-//    }
-//    
-//    private func navigateToMovieDetail(_ movie: MovieModel) {
-//        // Puedes realizar cualquier lógica adicional antes de navegar
-//    }
-//}

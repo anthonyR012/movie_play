@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel: MovieListViewModel
-
+    
     init() {
         let apiClient = APIClientDatasourceImpl(
             baseURL: Configuration.shared.baseUrl,
@@ -20,113 +20,157 @@ struct HomeView: View {
         let getGenresUseCase = GetGenresUseCaseImpl(apiClient: apiClient)
         _viewModel = StateObject(wrappedValue: MovieListViewModel(getMoviesUseCase, getGenresUseCase))
     }
-
+    
     var body: some View {
-        NavigationView {
-            VStack {
-                NavigationLink(destination: FilterView()) {
-                    SearchFilterView(query: $viewModel.filters.query ,enable: false)
+        NavigationStack {
+            VStack(alignment: .leading) {
+                HeaderView(title: "Find Movies, Tv series, and more..")
+                NavigationLink(destination:FilteredSearchView(viewModel: viewModel)) {
+                    SearchBarView(searchText: .constant(""), isEnabled: false)
                 }
-                CategoryFilter(category: $viewModel.filters.category)
-                Spacer()
-                ListMoviesScrollView(movies: $viewModel.movies,genres: viewModel.genres)
+                CategoryView(
+                    categories: CategoryMovie.allCases,
+                    selectedCategory: $viewModel.filters.category)
+                MovieGridView(movies: viewModel.movies,genres: viewModel.genres)
             }
-            .navigationTitle("Find Movies and More..")
-            .labelStyle(DefaultLabelStyle())
-        }
-    }
-}
-
-struct MovieCardView: View {
-    var movie: MovieModel
-    var width: CGFloat
-    var showSubTilte: Bool = true
-
-    var body: some View {
-        VStack(alignment: .center) {
-            AsyncImage(url: URL(string: "\(Configuration.shared.baseUrlImage)\(movie.posterPath!)")) { phase in
-                if let image = phase.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: width, height: 300)
-                } else if phase.error != nil {
-                    Text("Error al cargar la imagen")
-                        .foregroundColor(.red)
-                } else {
-                    ProgressView()
-                }
-            }
-            .frame(width: 220, height: 326)
-            .cornerRadius(10)
-            .padding()
-            if showSubTilte {
-                Text("\(movie.title) (\(movie.releaseDate))")
-                    .font(.caption)
-                    .foregroundColor(.black)
-                    .lineLimit(1)
-            }
-            
+            .background(Color.black.edgesIgnoringSafeArea(.all))
         }
     }
 }
 
 
-struct SearchFilterView: View {
-    @Binding var query : String
-    var enable : Bool = true
+struct HeaderView: View {
+    let title: String
+    
     var body: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
-            TextField("Sherlock Holmes", text: enable ? $query : .constant(""))
-                .foregroundStyle(.primary)
-                .disabled(!enable)
-        }
-        .padding()
+        Text(title)
+            .font(.title)
+            .bold()
+            .foregroundColor(.white)
+            .padding(.horizontal)
+            .padding(.top, 20)
+    }
+}
+
+
+struct SearchBarView: View {
+    @Binding var searchText: String
+    var isEnabled: Bool = true
+    
+    var body: some View {
+        TextField("Search", text: $searchText)
+        .padding(10)
+        .disabled(!isEnabled)
         .background(Color(.systemGray6))
         .cornerRadius(10)
         .padding(.horizontal)
-        .padding(.top)
+        .foregroundStyle(.black)
     }
 }
 
-struct ListMoviesScrollView: View {
-    @Binding var movies: [MovieModel]
-    let genres: [GenreModel]
-    var body: some View {
-        GeometryReader { proxy in
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()),
 
-                                    GridItem(.flexible())], spacing: 20)
-                {
-                    ForEach(movies, id: \.self) {
-                        movie in
-                        let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
-                        NavigationLink(destination: MovieDetailView(movie: movie,genres: movieGenres)) {
-                            MovieCardView(movie: movie,
-                                          width: proxy.size.width * 0.5)
+
+
+
+struct CategoryView: View {
+    let categories: [CategoryMovie]
+    @Binding var selectedCategory: CategoryMovie
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(categories, id: \.self) { category in
+                    Text(category.rawValue)
+                        .foregroundColor(selectedCategory == category ? .orange : .white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .background(
+                            Capsule()
+                                .fill(selectedCategory == category ? Color.white.opacity(0.1) : Color.clear)
+                        )
+                        .scaleEffect(selectedCategory == category ? 1.1 : 1.0)
+                        .animation(.easeInOut, value: selectedCategory)
+                        .onTapGesture {
+                            withAnimation {
+                                selectedCategory = category
+                            }
                         }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 10)
+        }
+    }
+}
+
+
+struct MovieGridView: View {
+    let movies: [MovieModel]
+    let genres: [GenreModel]
+    
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 16)]) {
+                ForEach(movies, id: \.self) { movie in
+                    let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
+                    MovieItemView(movie: movie,genres: movieGenres)
+                }
+            }
+            .padding()
+        }
+    }
+}
+
+struct MovieItemView: View {
+    let movie: MovieModel
+    let genres: [GenreModel]
+    
+    var body: some View {
+       
+        NavigationLink(destination: MovieDetailView(movie: movie, genres: genres)) {
+            VStack {
+                let baseUrlImage = Configuration.shared.baseUrlImage
+                let backdropPath = movie.backdropPath ?? ""
+                AsyncImage(url: URL(string: "\(baseUrlImage)\(backdropPath)")) { phase in
+                    switch phase {
+                    case .empty:
+                        Color.white.frame(width: 150, height: 200)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 150, height: 200)
+                            .clipped()
+                            .cornerRadius(10)
+                            .transition(.scale(scale: 0.5, anchor: .center))
+                    case .failure:
+                        Color.red
+                            .frame(width: 150, height: 200)
+                            .overlay(
+                                VStack {
+                                    Image(systemName: "exclamationmark.triangle")
+                                        .foregroundColor(.white)
+                                    Text("Failed to load image")
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                    
+                                }
+                            )
+                    @unknown default:
+                        EmptyView()
                     }
                 }
-                .padding()
+                
+                Text(movie.title)
+                    .font(.caption)
+                    .foregroundColor(.white)
+                
+                Text("(\(movie.releaseDate))")
+                    .font(.caption)
+                    .foregroundColor(.gray)
             }
         }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
-struct CategoryFilter: View {
-    @Binding var category: CategoryMovie
-    var body: some View {
-        Picker("Select Category", selection: $category) {
-            Text(CategoryMovie.popular.rawValue).tag(CategoryMovie.popular)
-            Text(CategoryMovie.topRated.rawValue)
-                .tag(CategoryMovie.topRated)
-        }
-        .pickerStyle(SegmentedPickerStyle())
-        .padding(.horizontal)
-        .accentColor(.blue)
-        .padding(.top)
-    }
-}

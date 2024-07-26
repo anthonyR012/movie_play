@@ -17,18 +17,18 @@ struct MovieFiltersModel {
     var typeFilter: FilterType
 }
 
-enum OriginalLanguage: String, Codable {
+enum OriginalLanguage: String, Codable , CaseIterable{
     case en
     case fr
     case zh
 }
 
-enum Popularity: String, Codable {
+enum Popularity: String, Codable , CaseIterable{
     case asc = "popularity.asc"
     case desc = "popularity.desc"
 }
 
-enum CategoryMovie: String, Codable {
+enum CategoryMovie: String, Codable , CaseIterable{
     case popular
     case topRated = "top_rated"
 }

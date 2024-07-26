@@ -8,86 +8,130 @@
 import Foundation
 import SwiftUI
 
-
 struct MovieDetailView: View {
     let movie: MovieModel
     let genres : [GenreModel]
-
+    
     var body: some View {
-            VStack(alignment: .center) {
-                HeaderDetailView(endPointImage: movie.posterPath)
-                ContentDetailView(movie: movie,genres: genres)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                MovieHeaderView(movie: movie)
+                MovieOverviewView(movie: movie)
+                MovieGenresView(genres: genres)
+                MovieDetailsView(movie: movie)
             }
-            .navigationTitle(movie.title)
-            .navigationBarTitleDisplayMode(.inline)
-        
+            .padding()
+        }
+        .navigationTitle(movie.title)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-struct HeaderDetailView: View {
-    var endPointImage: String?
+
+struct MovieHeaderView: View {
+    let movie: MovieModel
+    
     var body: some View {
-        VStack{
-            AsyncImage(url:
-                        URL(string: "\(Configuration.shared.baseUrlImage)\(endPointImage!)"))
-            { phase in
-                if let image = phase.image {
+        ZStack(alignment: .bottomLeading) {
+            let baseUrlImage = Configuration.shared.baseUrlImage
+            if let backdropPath = movie.backdropPath, let url = URL(string: "\(baseUrlImage)\(backdropPath)") {
+                AsyncImage(url: url) { image in
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 280) // Ajustar altura de la imagen
-                        .clipped()
-                    
-                } else if phase.error != nil {
-                    Image("NoFound")  .frame(width: 200, height: 200)
-                        .foregroundStyle(.black)
-                } else {
-                    ProgressView()  .frame(width: 200, height: 200)
-                        .foregroundStyle(.black)
+                        .scaledToFit()
+                } placeholder: {
+                    ProgressView()
                 }
+            } else {
+                Color.gray
             }
-            .frame( height: 100)
+            
+            Text(movie.title)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .padding()
+                .background(Color.black.opacity(0.7))
         }
-        
     }
 }
 
-struct ContentDetailView: View {
-    var movie: MovieModel
-    let genres : [GenreModel]
 
+struct MovieOverviewView: View {
+    let movie: MovieModel
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            VStack (alignment: .leading){
-                Text(movie.title)
-                    .font(.largeTitle)
-                    .bold()
-                    .foregroundStyle(.white)
-                
-                HStack {
-                    Text("Release date:")
-                        .font(.headline)
-                    Text(movie.releaseDate)
-                }.foregroundStyle(.white)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Overview")
+                .font(.title2)
+                .fontWeight(.bold)
+            Text(movie.overview)
+                .font(.body)
+                .foregroundColor(.secondary)
+        }
+    }
+}
+
+struct MovieDetailsView: View {
+    let movie: MovieModel
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Details")
+                .font(.title2)
+                .fontWeight(.bold)
+            
+            HStack {
+                Text("Release Date:")
+                    .fontWeight(.bold)
+                Text(movie.releaseDate)
             }
-            ScrollView (.horizontal,showsIndicators: false){
-                HStack {
-                    Text("Genre:")
-                        .font(.headline)
+            
+            HStack {
+                Text("Original Language:")
+                    .fontWeight(.bold)
+                Text(movie.originalLanguage)
+            }
+            
+            HStack {
+                Text("Vote Average:")
+                    .fontWeight(.bold)
+                Text("\(movie.voteAverage, specifier: "%.1f") (\(movie.voteCount) votes)")
+            }
+            
+            HStack {
+                Text("Popularity:")
+                    .fontWeight(.bold)
+                Text("\(movie.popularity, specifier: "%.1f")")
+            }
+            
+        }
+    }
+}
+
+
+struct MovieGenresView: View {
+    let genres: [GenreModel]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Genres")
+                .font(.title2)
+                .fontWeight(.bold)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
                     ForEach(genres, id: \.self) { genre in
                         Text(genre.name)
-                            .padding(6)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(5)
+                            .font(.body)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(Color.blue.opacity(0.2))
+                            .cornerRadius(8)
+                            .foregroundColor(.blue)
                     }
                 }
             }
-           
-
-            Text("Synopsis")
-                .font(.headline)
-            Text(movie.overview)
         }
-        .padding()
     }
 }

@@ -1,0 +1,25 @@
+# Archivos de compilación
+build/
+DerivedData/
+
+# Archivos específicos de Xcode
+*.xcworkspace
+*.xcuserdata/
+*.xcuserdatad/
+*.xcscmblueprint
+
+# Dependencias gestionadas por CocoaPods
+Pods/
+
+# Archivos de configuración sensible
+config.json
+Info.plist
+
+# Archivos de logs
+*.log
+
+# Certificados y credenciales
+*.pem
+*.key
+*.p12
+
