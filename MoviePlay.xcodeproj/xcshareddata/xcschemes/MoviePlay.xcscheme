@@ -61,6 +61,11 @@
             value = "https://api.themoviedb.org/3"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "BASE_URL_IMAGE"
+            value = "https://image.tmdb.org/t/p/w200/"
+            isEnabled = "YES">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction

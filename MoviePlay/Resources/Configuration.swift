@@ -9,12 +9,14 @@ import Foundation
 
 class Configuration {
     static let shared = Configuration()
-    
+
     private init() {
-        self.token = ProcessInfo.processInfo.environment["TOKEN"] ?? ""
-        self.baseUrl = ProcessInfo.processInfo.environment["BASE_URL"] ?? ""
+        token = ProcessInfo.processInfo.environment["TOKEN"] ?? ""
+        baseUrl = ProcessInfo.processInfo.environment["BASE_URL"] ?? ""
+        baseUrlImage = ProcessInfo.processInfo.environment["BASE_URL_IMAGE"] ?? ""
     }
-    
+
     var token: String
     var baseUrl: String
+    var baseUrlImage: String
 }

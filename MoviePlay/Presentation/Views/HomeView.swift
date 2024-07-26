@@ -9,76 +9,47 @@ import Foundation
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var viewModel = MovieListViewModel(
-        GetMoviesUseCaseImpl(
-            apiClient: APIClientImpl(
-                baseURL: Configuration.shared.baseUrl,
-                token: Configuration.shared.token
-            )))
-    
+    @StateObject private var viewModel: MovieListViewModel
+
+    init() {
+        let apiClient = APIClientDatasourceImpl(
+            baseURL: Configuration.shared.baseUrl,
+            token: Configuration.shared.token
+        )
+        let getMoviesUseCase = GetMoviesUseCaseImpl(apiClient: apiClient)
+        let getGenresUseCase = GetGenresUseCaseImpl(apiClient: apiClient)
+        _viewModel = StateObject(wrappedValue: MovieListViewModel(getMoviesUseCase, getGenresUseCase))
+    }
+
     var body: some View {
         NavigationView {
             VStack {
-                // Search bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
-                    TextField("Sherlock Holmes", text: .constant(""))
-                        .foregroundColor(.primary)
+                NavigationLink(destination: FilterView()) {
+                    SearchFilterView()
                 }
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .padding(.top)
-                
-                Picker("Select Category", selection:$viewModel.filters.category) {
-                    Text(CategoryMovie.popular.rawValue).tag(CategoryMovie.popular)
-                    Text(CategoryMovie.topRated.rawValue)
-                        .tag(CategoryMovie.topRated)
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal)
-                .padding(.top)
-                
+                CategoryFilter(category: $viewModel.filters.category)
                 Spacer()
-                
-                
-               
-                ScrollView {
-                      LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                          ForEach(viewModel.movies, id: \.self){
-                              movie in
-                              MovieCardView( movie: movie)
-                          }
-                          
-                            
-                        }
-                        .padding()
-                    
-                    
-                }
-                // Movie grid
-                
+                ListMoviesScrollView(movies: $viewModel.movies)
             }
-            .navigationTitle("Find Movies, Tv series, and more.." )
+            .navigationTitle("Find Movies and More..")
             .labelStyle(DefaultLabelStyle())
-            .background(Color("Background"))
         }
     }
 }
 
 struct MovieCardView: View {
     var movie: MovieModel
-    
+    var width: CGFloat
+    var showSubTilte: Bool = true
+
     var body: some View {
-        VStack(alignment: .leading) {
-            AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500/\(movie.posterPath!)")) { phase in
+        VStack(alignment: .center) {
+            AsyncImage(url: URL(string: "\(Configuration.shared.baseUrlImage)\(movie.posterPath!)")) { phase in
                 if let image = phase.image {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 200, height: 300)
+                        .frame(width: width, height: 300)
                 } else if phase.error != nil {
                     Text("Error al cargar la imagen")
                         .foregroundColor(.red)
@@ -89,12 +60,72 @@ struct MovieCardView: View {
             .frame(width: 220, height: 326)
             .cornerRadius(10)
             .padding()
-            Text("\(movie.title) (\(movie.releaseDate))")
-                .font(.caption)
-                .foregroundColor(.black)
-                .lineLimit(1)
+            if showSubTilte {
+                Text("\(movie.title) (\(movie.releaseDate))")
+                    .font(.caption)
+                    .foregroundColor(.black)
+                    .lineLimit(1)
+            }
+            
         }
     }
 }
 
+#Preview {
+    HomeView()
+}
 
+struct SearchFilterView: View {
+    @State var query : String = ""
+    var body: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+            TextField("Sherlock Holmes", text: $query)
+                .foregroundColor(.primary)
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+        .padding(.horizontal)
+        .padding(.top)
+    }
+}
+
+struct ListMoviesScrollView: View {
+    @Binding var movies: [MovieModel]
+    var body: some View {
+        GeometryReader { proxy in
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()),
+
+                                    GridItem(.flexible())], spacing: 20)
+                {
+                    ForEach(movies, id: \.self) {
+                        movie in
+                        NavigationLink(destination: MovieDetailView(movie: movie)) {
+                            MovieCardView(movie: movie,
+                                          width: proxy.size.width * 0.5)
+                        }
+                    }
+                }
+                .padding()
+            }
+        }
+    }
+}
+
+struct CategoryFilter: View {
+    @Binding var category: CategoryMovie
+    var body: some View {
+        Picker("Select Category", selection: $category) {
+            Text(CategoryMovie.popular.rawValue).tag(CategoryMovie.popular)
+            Text(CategoryMovie.topRated.rawValue)
+                .tag(CategoryMovie.topRated)
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .padding(.horizontal)
+        .accentColor(.blue)
+        .padding(.top)
+    }
+}

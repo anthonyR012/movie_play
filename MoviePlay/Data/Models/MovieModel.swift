@@ -5,24 +5,21 @@
 //  Created by Anthony Rubio on 24/07/24.
 //
 
-
-struct Movies: Codable, Hashable  {
+struct Movies: Codable, Hashable {
     let page: Int
     let results: [MovieModel]
     let totalPages, totalResults: Int
-    
+
     enum CodingKeys: String, CodingKey {
         case page, results
         case totalPages = "total_pages"
         case totalResults = "total_results"
     }
-    
-   
 }
 
-struct MovieModel: Codable ,Hashable {
+struct MovieModel: Codable, Hashable {
     let adult: Bool
-    let backdropPath,posterPath: String?
+    let backdropPath, posterPath: String?
     let genreIDS: [Int]
     let id: Int
     let originalLanguage: String
@@ -32,7 +29,7 @@ struct MovieModel: Codable ,Hashable {
     let video: Bool
     let voteAverage: Double
     let voteCount: Int
-    
+
     enum CodingKeys: String, CodingKey {
         case adult
         case backdropPath = "backdrop_path"
@@ -48,4 +45,3 @@ struct MovieModel: Codable ,Hashable {
         case voteCount = "vote_count"
     }
 }
-
