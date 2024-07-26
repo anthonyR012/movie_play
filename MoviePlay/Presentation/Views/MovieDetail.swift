@@ -10,8 +10,8 @@ import SwiftUI
 
 struct MovieDetailView: View {
     let movie: MovieModel
-    let genres : [GenreModel]
-    
+    let genres: [GenreModel]
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -27,10 +27,9 @@ struct MovieDetailView: View {
     }
 }
 
-
 struct MovieHeaderView: View {
     let movie: MovieModel
-    
+
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             let baseUrlImage = Configuration.shared.baseUrlImage
@@ -45,7 +44,7 @@ struct MovieHeaderView: View {
             } else {
                 Color.gray
             }
-            
+
             Text(movie.title)
                 .font(.largeTitle)
                 .fontWeight(.bold)
@@ -56,10 +55,9 @@ struct MovieHeaderView: View {
     }
 }
 
-
 struct MovieOverviewView: View {
     let movie: MovieModel
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Overview")
@@ -74,51 +72,49 @@ struct MovieOverviewView: View {
 
 struct MovieDetailsView: View {
     let movie: MovieModel
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Details")
                 .font(.title2)
                 .fontWeight(.bold)
-            
+
             HStack {
                 Text("Release Date:")
                     .fontWeight(.bold)
                 Text(movie.releaseDate)
             }
-            
+
             HStack {
                 Text("Original Language:")
                     .fontWeight(.bold)
                 Text(movie.originalLanguage)
             }
-            
+
             HStack {
                 Text("Vote Average:")
                     .fontWeight(.bold)
                 Text("\(movie.voteAverage, specifier: "%.1f") (\(movie.voteCount) votes)")
             }
-            
+
             HStack {
                 Text("Popularity:")
                     .fontWeight(.bold)
                 Text("\(movie.popularity, specifier: "%.1f")")
             }
-            
         }
     }
 }
 
-
 struct MovieGenresView: View {
     let genres: [GenreModel]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Genres")
                 .font(.title2)
                 .fontWeight(.bold)
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(genres, id: \.self) { genre in

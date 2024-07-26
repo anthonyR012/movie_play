@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel: MovieListViewModel
-    
+
     init() {
         let apiClient = APIClientDatasourceImpl(
             baseURL: Configuration.shared.baseUrl,
@@ -20,28 +20,28 @@ struct HomeView: View {
         let getGenresUseCase = GetGenresUseCaseImpl(apiClient: apiClient)
         _viewModel = StateObject(wrappedValue: MovieListViewModel(getMoviesUseCase, getGenresUseCase))
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading) {
                 HeaderView(title: "Find Movies, Tv series, and more..")
-                NavigationLink(destination:FilteredSearchView(viewModel: viewModel)) {
+                NavigationLink(destination: FilteredSearchView(viewModel: viewModel)) {
                     SearchBarView(searchText: .constant(""), isEnabled: false)
                 }
                 CategoryView(
                     categories: CategoryMovie.allCases,
-                    selectedCategory: $viewModel.filters.category)
-                MovieGridView(movies: viewModel.movies,genres: viewModel.genres)
+                    selectedCategory: $viewModel.filters.category
+                )
+                MovieGridView(movies: viewModel.movies, genres: viewModel.genres)
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
         }
     }
 }
 
-
 struct HeaderView: View {
     let title: String
-    
+
     var body: some View {
         Text(title)
             .font(.title)
@@ -52,30 +52,25 @@ struct HeaderView: View {
     }
 }
 
-
 struct SearchBarView: View {
     @Binding var searchText: String
     var isEnabled: Bool = true
-    
+
     var body: some View {
         TextField("Search", text: $searchText)
-        .padding(10)
-        .disabled(!isEnabled)
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
-        .padding(.horizontal)
-        .foregroundStyle(.black)
+            .padding(10)
+            .disabled(!isEnabled)
+            .background(Color(.systemGray6))
+            .cornerRadius(10)
+            .padding(.horizontal)
+            .foregroundStyle(.black)
     }
 }
-
-
-
-
 
 struct CategoryView: View {
     let categories: [CategoryMovie]
     @Binding var selectedCategory: CategoryMovie
-    
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
@@ -103,17 +98,16 @@ struct CategoryView: View {
     }
 }
 
-
 struct MovieGridView: View {
     let movies: [MovieModel]
     let genres: [GenreModel]
-    
+
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 16)]) {
                 ForEach(movies, id: \.self) { movie in
                     let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
-                    MovieItemView(movie: movie,genres: movieGenres)
+                    MovieItemView(movie: movie, genres: movieGenres)
                 }
             }
             .padding()
@@ -124,9 +118,8 @@ struct MovieGridView: View {
 struct MovieItemView: View {
     let movie: MovieModel
     let genres: [GenreModel]
-    
+
     var body: some View {
-       
         NavigationLink(destination: MovieDetailView(movie: movie, genres: genres)) {
             VStack {
                 let baseUrlImage = Configuration.shared.baseUrlImage
@@ -135,7 +128,7 @@ struct MovieItemView: View {
                     switch phase {
                     case .empty:
                         Color.white.frame(width: 150, height: 200)
-                    case .success(let image):
+                    case let .success(image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -153,18 +146,17 @@ struct MovieItemView: View {
                                     Text("Failed to load image")
                                         .foregroundColor(.white)
                                         .font(.caption)
-                                    
                                 }
                             )
                     @unknown default:
                         EmptyView()
                     }
                 }
-                
+
                 Text(movie.title)
                     .font(.caption)
                     .foregroundColor(.white)
-                
+
                 Text("(\(movie.releaseDate))")
                     .font(.caption)
                     .foregroundColor(.gray)
@@ -173,4 +165,3 @@ struct MovieItemView: View {
         .buttonStyle(PlainButtonStyle())
     }
 }
-
