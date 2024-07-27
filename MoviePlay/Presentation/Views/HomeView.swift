@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Kingfisher
 
 struct HomeView: View {
     @StateObject private var viewModel: MovieListViewModel
@@ -131,35 +132,13 @@ struct MovieItemView: View {
         NavigationLink(destination: MovieDetailView(movie: movie, genres: genres)) {
             VStack {
                 let backdropPath = movie.backdropPath ?? ""
-                AsyncImage(url: URL(string: "\(baseUrlImage)\(backdropPath)")) { phase in
-                    switch phase {
-                    case .empty:
-                        Color.white.frame(width: 150, height: 200).cornerRadius(10)
-                    case let .success(image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 150, height: 200)
-                            .clipped()
-                            .cornerRadius(10)
-                            .transition(.scale(scale: 0.5, anchor: .center))
-                    case .failure:
-                        Color.red
-                            .frame(width: 150, height: 200)
-                            .overlay(
-                                VStack {
-                                    Image(systemName: "exclamationmark.triangle")
-                                        .foregroundColor(.white)
-                                    Text("Failed to load image")
-                                        .foregroundColor(.white)
-                                        .font(.caption)
-                                }
-                            ).cornerRadius(10)
-                    @unknown default:
-                        EmptyView()
-                    }
-                }
-
+                KFImage(URL(string: "\(baseUrlImage)\(backdropPath)"))
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 150, height: 200)
+                    .clipped()
+                    .cornerRadius(10)
+                
                 Text(movie.title)
                     .font(.caption)
                     .foregroundColor(.white)

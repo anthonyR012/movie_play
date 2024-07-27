@@ -8,6 +8,7 @@ struct FilteredSearchView: View {
             SearchBarView(searchText: $viewModel.filters.query)
             MovieFilterView(filters: $viewModel.filters)
             FilteredResult(movies: viewModel.movies, genres: viewModel.genres)
+                    
         }
         .background(Color.black.edgesIgnoringSafeArea(.all))
         .foregroundColor(.white)
@@ -44,10 +45,25 @@ struct FilteredResult: View {
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 16)]) {
-                ForEach(movies, id: \.self) { movie in
-                    let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
-                    MovieItemView(movie: movie, genres: movieGenres)
+                if movies.isEmpty {
+                    VStack(alignment: .center){
+                        Spacer()
+                        Image(systemName: "exclamationmark.triangle")
+                            .resizable()
+                            .frame(width: 100,height: 90)
+                            .foregroundColor(.white)
+                        Text("No found")
+                            .foregroundColor(.white)
+                            .font(.headline)
+                        Spacer()
+                    }
+                }else{
+                    ForEach(movies, id: \.self) { movie in
+                        let movieGenres = genres.filter { movie.genreIDS.contains($0.id) }
+                        MovieItemView(movie: movie, genres: movieGenres)
+                    }
                 }
+                
             }
             .padding()
         }
