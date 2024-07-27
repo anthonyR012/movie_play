@@ -37,7 +37,8 @@ struct MovieHeaderView: View {
                 AsyncImage(url: url) { image in
                     image
                         .resizable()
-                        .scaledToFit()
+                        .aspectRatio(contentMode: .fit)
+                        .ignoresSafeArea(edges: .all)
                 } placeholder: {
                     ProgressView()
                 }

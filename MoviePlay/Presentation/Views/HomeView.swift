@@ -55,17 +55,25 @@ struct HeaderView: View {
 struct SearchBarView: View {
     @Binding var searchText: String
     var isEnabled: Bool = true
-
+    @FocusState var isFocused : Bool
+    
     var body: some View {
-        TextField("Search", text: $searchText)
-            .padding(10)
-            .disabled(!isEnabled)
-            .background(Color(.systemGray6))
-            .cornerRadius(10)
-            .padding(.horizontal)
-            .foregroundStyle(.black)
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(isFocused ? .orange : .gray)
+            TextField("Sherlock Holmes", text: $searchText)
+                .foregroundColor(.primary)
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .focused($isFocused)
+        .cornerRadius(10)
+        .padding(.horizontal)
+        .padding(.top)
     }
 }
+
+
 
 struct CategoryView: View {
     let categories: [CategoryMovie]
@@ -118,16 +126,15 @@ struct MovieGridView: View {
 struct MovieItemView: View {
     let movie: MovieModel
     let genres: [GenreModel]
-
+    private let baseUrlImage = Configuration.shared.baseUrlImage
     var body: some View {
         NavigationLink(destination: MovieDetailView(movie: movie, genres: genres)) {
             VStack {
-                let baseUrlImage = Configuration.shared.baseUrlImage
                 let backdropPath = movie.backdropPath ?? ""
                 AsyncImage(url: URL(string: "\(baseUrlImage)\(backdropPath)")) { phase in
                     switch phase {
                     case .empty:
-                        Color.white.frame(width: 150, height: 200)
+                        Color.white.frame(width: 150, height: 200).cornerRadius(10)
                     case let .success(image):
                         image
                             .resizable()
@@ -147,7 +154,7 @@ struct MovieItemView: View {
                                         .foregroundColor(.white)
                                         .font(.caption)
                                 }
-                            )
+                            ).cornerRadius(10)
                     @unknown default:
                         EmptyView()
                     }

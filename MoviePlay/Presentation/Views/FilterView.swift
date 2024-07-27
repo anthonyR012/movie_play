@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FilteredSearchView: View {
-    @StateObject var viewModel: MovieListViewModel
+    @ObservedObject var viewModel: MovieListViewModel
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -30,7 +30,7 @@ struct MovieFilterView: View {
                 .tint(.black)
         }
         .padding()
-        .background(Color(.darkGray))
+        .background(Color(.white))
         .cornerRadius(10)
         .padding(.horizontal)
         .transition(.slide)
