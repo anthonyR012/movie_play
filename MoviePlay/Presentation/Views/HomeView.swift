@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel: MovieListViewModel
@@ -56,8 +56,8 @@ struct HeaderView: View {
 struct SearchBarView: View {
     @Binding var searchText: String
     var isEnabled: Bool = true
-    @FocusState var isFocused : Bool
-    
+    @FocusState var isFocused: Bool
+
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -73,8 +73,6 @@ struct SearchBarView: View {
         .padding(.top)
     }
 }
-
-
 
 struct CategoryView: View {
     let categories: [CategoryMovie]
@@ -120,7 +118,9 @@ struct MovieGridView: View {
                 }
             }
             .padding()
-        }
+        }.transition(.move(edge: .bottom))
+            .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0),
+                       value: UUID())
     }
 }
 
@@ -138,7 +138,7 @@ struct MovieItemView: View {
                     .frame(width: 150, height: 200)
                     .clipped()
                     .cornerRadius(10)
-                
+
                 Text(movie.title)
                     .font(.caption)
                     .foregroundColor(.white)
@@ -150,4 +150,8 @@ struct MovieItemView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
+}
+
+#Preview {
+    HomeView()
 }

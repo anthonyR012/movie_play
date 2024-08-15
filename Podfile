@@ -3,4 +3,9 @@ platform :ios, '17.0'
 
 target 'MoviePlay' do
   pod 'Kingfisher'
+  
+  target 'MoviePlayTests' do
+    inherit! :search_paths
+  end
+  
 end

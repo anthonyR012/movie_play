@@ -74,4 +74,3 @@ final class GetMoviesUseCaseTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 }
-

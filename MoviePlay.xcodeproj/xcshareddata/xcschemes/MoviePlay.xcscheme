@@ -41,6 +41,17 @@
                ReferencedContainer = "container:MoviePlay.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "09AE9C952C6D943C0036D9E4"
+               BuildableName = "MoviePlayTest.xctest"
+               BlueprintName = "MoviePlayTest"
+               ReferencedContainer = "container:MoviePlay.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
